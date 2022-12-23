@@ -6,7 +6,6 @@ public class BankManagement
 		while(true)
 		{
 				bank.menu();
-				
 		}
 	}
 }
