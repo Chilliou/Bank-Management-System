@@ -168,6 +168,19 @@ public class Bank
 
 	private void erase()
 	{
+		int numAccount;
+		String input;
+		Account accountErase;
+
+		do
+		{
+			System.out.print("\nEnter your num Account : ");
+			input = scanner.nextLine();
+			numAccount = Integer.parseInt( input );
+			accountErase = this.getAccount(numAccount);
+		}while(accountErase == null);
+
+		this.listClient.remove(accountErase);
 		this.save();
 	}
 
