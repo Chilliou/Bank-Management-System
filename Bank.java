@@ -141,7 +141,6 @@ public class Bank
 		this.listClient.set(this.listClient.indexOf(accountEdited),
 							new Account(numAccount,firstName,lastName,accountEdited.getBalance()));
 
-		
 		this.save();
 	}
 
@@ -152,7 +151,19 @@ public class Bank
 
 	private void see()
 	{
-		
+		int numAccount;
+		String input;
+		Account accountSee;
+
+		do
+		{
+			System.out.print("\nEnter your num Account : ");
+			input = scanner.nextLine();
+			numAccount = Integer.parseInt( input );
+			accountSee = this.getAccount(numAccount);
+		}while(accountSee == null);
+
+		System.out.println(accountSee);
 	}
 
 	private void erase()
