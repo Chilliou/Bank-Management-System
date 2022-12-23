@@ -19,7 +19,6 @@ public class Bank
 	public Bank()
 	{
 		this.listClient = new ArrayList<Account>();
-		this.listClient.add(new Account(0,"Dorian","Lemercier",1000.0));
 
 		try
         {
@@ -88,19 +87,9 @@ public class Bank
 
 	private void newAccount()
 	{
-		String firstName;
-		String lastName;
-		do
-		{
-			System.out.print("\nEnter your first name : ");
-			firstName = scanner.nextLine();
-
-			System.out.print("Enter your last name : ");
-			lastName = scanner.nextLine();
-
-			System.out.println("");
-		}while( !Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", firstName) ||
-				!Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", lastName) );
+		String[] name = this.getName();
+		String firstName = name[0];
+		String lastName = name[1];
 
 		int numAccount = this.listClient.get(this.listClient.size()-1).getnumAccount()+1;
 
@@ -111,74 +100,59 @@ public class Bank
 
 	private void edit()
 	{
-		int numAccount;
-		String firstName;
-		String lastName;
-		Account accountEdited;
-		String input;
+		String[] name = this.getName();
+		String firstName = name[0];
+		String lastName = name[1];
+		Account accountEdited  = this.getAccount();
 		
-		do
-		{
-			System.out.print("\nEnter your num Account : ");
-			input = scanner.nextLine();
-			numAccount = Integer.parseInt( input );
-			accountEdited = this.getAccount(numAccount);
-		}while(accountEdited == null);
-
-		do
-		{
-
-			System.out.print("\nEnter your first name : ");
-			firstName = scanner.nextLine();
-
-			System.out.print("Enter your last name : ");
-			lastName = scanner.nextLine();
-
-			System.out.println("");
-		}while( !Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", firstName) ||
-				!Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", lastName) );
-
 		this.listClient.set(this.listClient.indexOf(accountEdited),
-							new Account(numAccount,firstName,lastName,accountEdited.getBalance()));
+							new Account(accountEdited.getnumAccount(),firstName,lastName,accountEdited.getBalance()));
 
 		this.save();
 	}
 
 	private void transact()
 	{
+		Account accountSender = this.getAccount();
+		Account accountReceiver = this.getAccount();
+
+		String input;
+		double value;
+
+		do
+		{
+			System.out.print("\nEnter the value of the transaction : ");
+			input = scanner.nextLine();
+			value = Double.parseDouble( input );
+		}while(value <=0.0 || value >accountSender.getBalance());
+
+		this.listClient.set(this.listClient.indexOf(accountSender),
+							new Account(accountSender.getnumAccount(),
+										accountSender.getfirstName(),
+										accountSender.getlastName(),
+										accountSender.getBalance()-value));
+
+		this.listClient.set(this.listClient.indexOf(accountReceiver),
+							new Account(accountReceiver.getnumAccount(),
+										accountReceiver.getfirstName(),
+										accountReceiver.getlastName(),
+										accountReceiver.getBalance()+value));
+
+
+
 		this.save();
 	}
 
 	private void see()
 	{
-		int numAccount;
-		String input;
-		Account accountSee;
-
-		do
-		{
-			System.out.print("\nEnter your num Account : ");
-			input = scanner.nextLine();
-			numAccount = Integer.parseInt( input );
-			accountSee = this.getAccount(numAccount);
-		}while(accountSee == null);
+		Account accountSee = this.getAccount();
 
 		System.out.println(accountSee);
 	}
 
 	private void erase()
 	{
-		int numAccount;
-		String input;
-		Account accountErase;
-
-		do
-		{
-			System.out.print("\nEnter your num Account : ");
-			input = scanner.nextLine();
-			numAccount = Integer.parseInt( input );
-			accountErase = this.getAccount(numAccount);
-		}while(accountErase == null);
+		Account accountErase = this.getAccount();
 
 		this.listClient.remove(accountErase);
 		this.save();
@@ -209,6 +183,23 @@ public class Bank
 
 	}
 
+	private Account getAccount()
+	{
+		int numAccount;
+		String input;
+		Account account;
+
+		do
+		{
+			System.out.print("\nEnter your num Account : ");
+			input = scanner.nextLine();
+			numAccount = Integer.parseInt( input );
+			account = this.getAccount(numAccount);
+		}while(account == null);
+
+		return account;
+	}
+
 	private Account getAccount(int numAccount)
 	{
 		for(Account ac : this.listClient)
@@ -219,6 +210,26 @@ public class Bank
 			}
 		}
 		return null;
+	}
+
+	private String[] getName()
+	{
+		String firstName;
+		String lastName;
+		do
+		{
+			System.out.print("\nEnter your first name : ");
+			firstName = scanner.nextLine();
+
+			System.out.print("Enter your last name : ");
+			lastName = scanner.nextLine();
+
+			System.out.println("");
+		}while( !Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", firstName) ||
+				!Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", lastName) );
+
+		String[] name = {firstName,lastName};
+		return name;
 	}
 
 }
