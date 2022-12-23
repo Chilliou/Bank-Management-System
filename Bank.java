@@ -58,13 +58,17 @@ public class Bank
 		System.out.println("7.Exit \n");
 
 		String input;
-		int choice;
+		int choice=-1;
 		do
 		{
 			System.out.print("Enter your choice : ");
-
-			input = scanner.nextLine();
-			choice = Integer.parseInt( input );
+			try
+			{
+				input = scanner.nextLine();
+				choice = Integer.parseInt( input );
+			} catch(NumberFormatException e){
+				System.out.println("Insert a number, please.\n");
+			}
 
 		}while(choice <=0 || choice >7);
 
@@ -117,13 +121,19 @@ public class Bank
 		Account accountReceiver = this.getAccount();
 
 		String input;
-		double value;
+		double value = -1;
 
 		do
 		{
 			System.out.print("\nEnter the value of the transaction : ");
-			input = scanner.nextLine();
-			value = Double.parseDouble( input );
+			try
+			{
+				input = scanner.nextLine();
+				value = Double.parseDouble( input );
+			} catch(NumberFormatException e){
+				System.out.println("Insert a double, please.\n");
+			}
+
 		}while(value <=0.0 || value >accountSender.getBalance());
 
 		this.listClient.set(this.listClient.indexOf(accountSender),
@@ -185,15 +195,21 @@ public class Bank
 
 	private Account getAccount()
 	{
-		int numAccount;
+		int numAccount = -1;
 		String input;
 		Account account;
 
 		do
 		{
 			System.out.print("\nEnter your num Account : ");
-			input = scanner.nextLine();
-			numAccount = Integer.parseInt( input );
+			try
+			{
+				input = scanner.nextLine();
+				numAccount = Integer.parseInt( input );
+			} catch(NumberFormatException e){
+				System.out.println("Insert a number, please.\n");
+			}
+
 			account = this.getAccount(numAccount);
 		}while(account == null);
 
