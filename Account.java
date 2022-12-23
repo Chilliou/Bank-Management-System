@@ -32,7 +32,7 @@ public class Account implements Serializable
 		return this.lastName;
 	}
 
-	public double getbalance()
+	public double getBalance()
 	{
 		return this.balance;
 	}

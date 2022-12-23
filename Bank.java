@@ -6,16 +6,20 @@ import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
 public class Bank
 {
 	private ArrayList<Account> listClient;
+	private static Scanner scanner = new Scanner( System.in );
 
 	public Bank()
 	{
 		this.listClient = new ArrayList<Account>();
+		this.listClient.add(new Account(0,"Dorian","Lemercier",1000.0));
 
 		try
         {
@@ -60,7 +64,6 @@ public class Bank
 		{
 			System.out.print("Enter your choice : ");
 
-			Scanner scanner = new Scanner(System.in);
 			input = scanner.nextLine();
 			choice = Integer.parseInt( input );
 
@@ -74,7 +77,8 @@ public class Bank
 			case 4 -> this.see();
 			case 5 -> this.erase();
 			case 6 -> this.viewList();
-			case 7 -> this.exit();
+			case 7 -> {this.save(); 
+					   System.exit(0);}
 			default -> {System.out.println("Error 404 "); 
 						System.exit( -1 );}
 		}
@@ -84,17 +88,66 @@ public class Bank
 
 	private void newAccount()
 	{
-		
+		String firstName;
+		String lastName;
+		do
+		{
+			System.out.print("\nEnter your first name : ");
+			firstName = scanner.nextLine();
+
+			System.out.print("Enter your last name : ");
+			lastName = scanner.nextLine();
+
+			System.out.println("");
+		}while( !Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", firstName) ||
+				!Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", lastName) );
+
+		int numAccount = this.listClient.get(this.listClient.size()-1).getnumAccount()+1;
+
+		this.listClient.add(new Account(numAccount,firstName,lastName,0.0));
+		this.save();
+
 	}
 
 	private void edit()
 	{
+		int numAccount;
+		String firstName;
+		String lastName;
+		Account accountEdited;
+		String input;
 		
+		do
+		{
+			System.out.print("\nEnter your num Account : ");
+			input = scanner.nextLine();
+			numAccount = Integer.parseInt( input );
+			accountEdited = this.getAccount(numAccount);
+		}while(accountEdited == null);
+
+		do
+		{
+
+			System.out.print("\nEnter your first name : ");
+			firstName = scanner.nextLine();
+
+			System.out.print("Enter your last name : ");
+			lastName = scanner.nextLine();
+
+			System.out.println("");
+		}while( !Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", firstName) ||
+				!Pattern.matches("(?i)(^[a-z])((?![ .,'-]$)[a-z .,'-]){0,24}$", lastName) );
+
+		this.listClient.set(this.listClient.indexOf(accountEdited),
+							new Account(numAccount,firstName,lastName,accountEdited.getBalance()));
+
+		
+		this.save();
 	}
 
 	private void transact()
 	{
-		
+		this.save();
 	}
 
 	private void see()
@@ -104,7 +157,7 @@ public class Bank
 
 	private void erase()
 	{
-		
+		this.save();
 	}
 
 	private void viewList()
@@ -115,7 +168,7 @@ public class Bank
 		}
 	}
 
-	private void exit()
+	public void save()
 	{
 		try
 		{
@@ -130,7 +183,18 @@ public class Bank
 			ioe.printStackTrace();
 		}
 
-		System.exit(0);
+	}
+
+	private Account getAccount(int numAccount)
+	{
+		for(Account ac : this.listClient)
+		{
+			if(ac.getnumAccount() == numAccount)
+			{
+				return ac;
+			}
+		}
+		return null;
 	}
 
 }
