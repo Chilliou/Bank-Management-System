@@ -117,8 +117,17 @@ public class Bank
 
 	private void transact()
 	{
-		Account accountSender = this.getAccount();
-		Account accountReceiver = this.getAccount();
+		Account accountSender;
+		Account accountReceiver;
+		do{
+			accountSender = this.getAccount();
+			accountReceiver = this.getAccount();
+			if(accountReceiver.equals(accountSender))
+			{
+				System.out.println("The two counts cannot be equal");
+			}
+		}while(accountReceiver.equals(accountSender));
+		
 
 		String input;
 		double value = -1;
@@ -134,7 +143,13 @@ public class Bank
 				System.out.println("Insert a double, please.\n");
 			}
 
+			if(value >accountSender.getBalance() )
+			{
+				System.out.println("The account does not have enough on its balance ");
+			}
+
 		}while(value <=0.0 || value >accountSender.getBalance());
+
 
 		this.listClient.set(this.listClient.indexOf(accountSender),
 							new Account(accountSender.getnumAccount(),
@@ -148,7 +163,9 @@ public class Bank
 										accountReceiver.getlastName(),
 										accountReceiver.getBalance()+value));
 
-
+		String transaction = "\n " +value + "€ | "+ accountSender.getfirstName()   +" "+ accountSender.getlastName() +" -> "+ 
+												   accountReceiver.getfirstName() +" "+ accountReceiver.getlastName();
+		System.out.println( transaction	);
 
 		this.save();
 	}
@@ -210,7 +227,8 @@ public class Bank
 				System.out.println("Insert a number, please.\n");
 			}
 
-			account = this.getAccount(numAccount);
+			if((account = this.getAccount(numAccount)) == null)
+				System.out.println("The account number is not valid");
 		}while(account == null);
 
 		return account;
