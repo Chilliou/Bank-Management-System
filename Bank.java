@@ -11,10 +11,12 @@ import java.util.regex.Pattern;
 
 
 
-public class Bank
+
+public class Bank 
 {
 	private ArrayList<Account> listClient;
 	private static Scanner scanner = new Scanner( System.in );
+	private boolean firstTime = true;
 
 	public Bank()
 	{
@@ -47,6 +49,12 @@ public class Bank
 
 	public void menu()
 	{
+		if(firstTime)
+		{
+			this.firstTime= false;
+			this.clearConsole(false);
+		}
+
 		System.out.println("\nCUSTOMER ACCOUNT BANKING MANAGEMENT SYSTEM\n ");
 		System.out.println("         WELCOME TO THE MAIN MENU         \n");
 		System.out.println("1.Create new account");
@@ -98,20 +106,21 @@ public class Bank
 		int numAccount = this.listClient.get(this.listClient.size()-1).getnumAccount()+1;
 
 		this.listClient.add(new Account(numAccount,firstName,lastName,0.0));
+		this.clearConsole(false);
 		this.save();
-
 	}
 
 	private void edit()
 	{
+		Account accountEdited  = this.getAccount();
 		String[] name = this.getName();
 		String firstName = name[0];
 		String lastName = name[1];
-		Account accountEdited  = this.getAccount();
 		
 		this.listClient.set(this.listClient.indexOf(accountEdited),
 							new Account(accountEdited.getnumAccount(),firstName,lastName,accountEdited.getBalance()));
 
+		this.clearConsole(false);
 		this.save();
 	}
 
@@ -167,7 +176,9 @@ public class Bank
 												   accountReceiver.getfirstName() +" "+ accountReceiver.getlastName();
 		System.out.println( transaction	);
 
+		this.clearConsole(true);
 		this.save();
+
 	}
 
 	private void see()
@@ -175,6 +186,8 @@ public class Bank
 		Account accountSee = this.getAccount();
 
 		System.out.println(accountSee);
+		this.clearConsole(true);
+
 	}
 
 	private void erase()
@@ -182,11 +195,15 @@ public class Bank
 		Account accountErase = this.getAccount();
 
 		this.listClient.remove(accountErase);
+		this.clearConsole(false);
 		this.save();
 	}
 
 	private void viewList()
 	{
+		this.clearConsole(false);
+		System.out.println("\n  NumAcc |    Prenom     Nom    | Balance");
+		System.out.println("-------------------------------------------------------");
 		for(Account ac : this.listClient)
 		{
 			System.out.println(ac);
@@ -266,4 +283,20 @@ public class Bank
 		return name;
 	}
 
+	private void clearConsole(boolean timing) 
+	{
+		if(timing)
+		{
+			String input = scanner.nextLine();
+		}
+
+		try
+		{
+			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();  
+		}catch(Exception e)
+		{
+			System.out.println(	"Error 405");
+		}
+
+	}
 }
