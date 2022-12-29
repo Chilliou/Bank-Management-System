@@ -57,19 +57,7 @@ public class Bank
 		System.out.println("3.Exit \n");
 
 		String input;
-		int choice=-1;
-		do
-		{
-			System.out.print("Enter your choice : ");
-			try
-			{
-				input = scanner.nextLine();
-				choice = Integer.parseInt( input );
-			} catch(NumberFormatException e){
-				System.out.println("Insert a number, please.\n");
-			}
-
-		}while(choice !=1 && choice !=2 &&choice !=3);
+		int choice=this.choiceChooser(1,3);
 
 		switch(choice)
 		{
@@ -80,45 +68,6 @@ public class Bank
 			default -> {System.out.println("Error 404 "); 
 						System.exit( -1 );}
 		}
-	}
-
-	private void connectAccount()
-	{
-		Account acc = this.getAccount();
-		if(this.checkPassword(acc))
-		{
-			System.out.println("Account connected");
-			this.loggedAccount = acc;
-			this.menuAccount();
-		}
-
-	}
-
-	private boolean checkPassword(Account acc)
-	{
-		boolean ret = false;
-		String password = acc.getfirstName().substring(0,2) + acc.getlastName().substring(0,2);
-		String input;
-		int i=0;
-		do
-		{
-			System.out.print("Insert your password : ");
-			input = scanner.nextLine();
-			System.out.println("");
-
-			ret = input.equals(password);
-			i++;
-		}while(i<3 && !ret);
-
-		if(!ret)
-		{
-			System.out.println("Too many failed attempts");
-			this.save();
-			System.exit(0);
-		}
-		
-
-		return ret;
 	}
 
 	public void menuAccount()
@@ -145,19 +94,7 @@ public class Bank
 		System.out.println("7.Exit \n");
 
 		String input;
-		int choice=-1;
-		do
-		{
-			System.out.print("Enter your choice : ");
-			try
-			{
-				input = scanner.nextLine();
-				choice = Integer.parseInt( input );
-			} catch(NumberFormatException e){
-				System.out.println("Insert a number, please.\n");
-			}
-
-		}while(choice <=0 || choice >7);
+		int choice=this.choiceChooser(1,7);
 
 		switch(choice)
 		{
@@ -342,6 +279,18 @@ public class Bank
 		return null;
 	}
 
+	private void connectAccount()
+	{
+		Account acc = this.getAccount();
+		if(this.checkPassword(acc))
+		{
+			System.out.println("Account connected");
+			this.loggedAccount = acc;
+			this.menuAccount();
+		}
+
+	}
+
 	private String[] getName()
 	{
 		String firstName;
@@ -377,5 +326,57 @@ public class Bank
 			System.out.println(	"Error 405");
 		}
 
+	}
+
+	private int choiceChooser(int min,int max)
+	{
+		String input;
+		int choice=-1;
+		do
+		{
+			System.out.print("Enter your choice : ");
+			try
+			{
+				input = scanner.nextLine();
+				choice = Integer.parseInt( input );
+			} catch(NumberFormatException e){
+				System.out.println("Insert a number, please.\n");
+			}
+
+		}while(!this.intervalCheck(min,max,choice));
+
+		return choice;
+	}
+
+	private boolean intervalCheck(int min,int max,int i)
+	{
+		return (i>=min && i<=max);
+	}
+
+	private boolean checkPassword(Account acc)
+	{
+		boolean ret = false;
+		String password = acc.getfirstName().substring(0,2) + acc.getlastName().substring(0,2);
+		String input;
+		int i=0;
+		do
+		{
+			System.out.print("Insert your password : ");
+			input = scanner.nextLine();
+			System.out.println("");
+
+			ret = input.equals(password);
+			i++;
+		}while(i<3 && !ret);
+
+		if(!ret)
+		{
+			System.out.println("Too many failed attempts");
+			this.save();
+			System.exit(0);
+		}
+		
+
+		return ret;
 	}
 }
