@@ -49,6 +49,13 @@ public class Bank
 		
 	}
 
+
+	//////////////////////////////////////////////////////////
+	//														//
+	//						MENU							//
+	//														//
+	//////////////////////////////////////////////////////////
+
 	public void menuLoader()
 	{
 		System.out.println("HELLO TO YOUR FAVORITE BANK\n");
@@ -99,11 +106,11 @@ public class Bank
 		switch(choice)
 		{
 			case 1 -> this.newAccount();
-			case 2 -> this.edit();
+			case 2 -> this.editAccount();
 			case 3 -> this.transact();
-			case 4 -> this.see();
-			case 5 -> this.erase();
-			case 6 -> this.viewList();
+			case 4 -> this.seeAccount();
+			case 5 -> this.eraseAccount();
+			case 6 -> this.viewListAccount();
 			case 7 -> {this.save(); 
 					   System.exit(0);}
 			default -> {System.out.println("Error 404 "); 
@@ -112,6 +119,12 @@ public class Bank
 		
 		this.menuAdmin();
 	}
+
+	//////////////////////////////////////////////////////////
+	//														//
+	//						FUNC							//
+	//														//
+	//////////////////////////////////////////////////////////
 
 	private void newAccount()
 	{
@@ -126,15 +139,15 @@ public class Bank
 		this.save();
 	}
 
-	private void edit()
+	private void editAccount()
 	{
-		Account accountEdited  = this.getAccount();
+		Account accounteditAccounted  = this.getAccount();
 		String[] name = this.getName();
 		String firstName = name[0];
 		String lastName = name[1];
 		
-		this.listClient.set(this.listClient.indexOf(accountEdited),
-							new Account(accountEdited.getnumAccount(),firstName,lastName,accountEdited.getBalance()));
+		this.listClient.set(this.listClient.indexOf(accounteditAccounted),
+							new Account(accounteditAccounted.getnumAccount(),firstName,lastName,accounteditAccounted.getBalance()));
 
 		this.clearConsole(false);
 		this.save();
@@ -153,29 +166,8 @@ public class Bank
 			}
 		}while(accountReceiver.equals(accountSender));
 		
-
-		String input;
-		double value = -1;
-
-		do
-		{
-			System.out.print("\nEnter the value of the transaction : ");
-			try
-			{
-				input = scanner.nextLine();
-				value = Double.parseDouble( input );
-			} catch(NumberFormatException e){
-				System.out.println("Insert a double, please.\n");
-			}
-
-			if(value >accountSender.getBalance() )
-			{
-				System.out.println("The account does not have enough on its balance ");
-			}
-
-		}while(value <=0.0 || value >accountSender.getBalance());
-
-
+		double value = this.getValueTransact(accountSender);
+	
 		this.listClient.set(this.listClient.indexOf(accountSender),
 							new Account(accountSender.getnumAccount(),
 										accountSender.getfirstName(),
@@ -197,25 +189,25 @@ public class Bank
 
 	}
 
-	private void see()
+	private void seeAccount()
 	{
-		Account accountSee = this.getAccount();
+		Account accountseeAccount = this.getAccount();
 
-		System.out.println(accountSee);
+		System.out.println(accountseeAccount);
 		this.clearConsole(true);
 
 	}
 
-	private void erase()
+	private void eraseAccount()
 	{
-		Account accountErase = this.getAccount();
+		Account accounteraseAccount = this.getAccount();
 
-		this.listClient.remove(accountErase);
+		this.listClient.remove(accounteraseAccount);
 		this.clearConsole(false);
 		this.save();
 	}
 
-	private void viewList()
+	private void viewListAccount()
 	{
 		this.clearConsole(false);
 		System.out.println("\n  NumAcc |    Prenom     Nom    | Balance");
@@ -226,22 +218,17 @@ public class Bank
 		}
 	}
 
-	public void save()
-	{
-		try
-		{
-			FileOutputStream fos = new FileOutputStream("clientData");
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(this.listClient);
-			oos.close();
-			fos.close();
-		} 
-		catch (IOException ioe) 
-		{
-			ioe.printStackTrace();
-		}
+	
 
-	}
+	
+
+	//////////////////////////////////////////////////////////
+	//														//
+	//					GETTER SETTER						//
+	//														//
+	//////////////////////////////////////////////////////////
+
+	
 
 	private Account getAccount()
 	{
@@ -279,18 +266,6 @@ public class Bank
 		return null;
 	}
 
-	private void connectAccount()
-	{
-		Account acc = this.getAccount();
-		if(this.checkPassword(acc))
-		{
-			System.out.println("Account connected");
-			this.loggedAccount = acc;
-			this.menuAccount();
-		}
-
-	}
-
 	private String[] getName()
 	{
 		String firstName;
@@ -309,6 +284,43 @@ public class Bank
 
 		String[] name = {firstName,lastName};
 		return name;
+	}
+
+
+	//////////////////////////////////////////////////////////
+	//														//
+	//						UTILITY							//
+	//														//
+	//////////////////////////////////////////////////////////
+
+
+	public void save()
+	{
+		try
+		{
+			FileOutputStream fos = new FileOutputStream("clientData");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(this.listClient);
+			oos.close();
+			fos.close();
+		} 
+		catch (IOException ioe) 
+		{
+			ioe.printStackTrace();
+		}
+
+	}
+
+	private void connectAccount()
+	{
+		Account acc = this.getAccount();
+		if(this.checkPassword(acc))
+		{
+			System.out.println("Account connected");
+			this.loggedAccount = acc;
+			this.menuAccount();
+		}
+
 	}
 
 	private void clearConsole(boolean timing) 
@@ -358,16 +370,19 @@ public class Bank
 		boolean ret = false;
 		String password = acc.getfirstName().substring(0,2) + acc.getlastName().substring(0,2);
 		String input;
-		int i=0;
-		do
+
+		for(int i=0;i<3 && !ret;i++)
 		{
 			System.out.print("Insert your password : ");
 			input = scanner.nextLine();
 			System.out.println("");
 
 			ret = input.equals(password);
-			i++;
-		}while(i<3 && !ret);
+			if(!ret)
+			{
+				System.out.println(	"Wrong password !");
+			}
+		}
 
 		if(!ret)
 		{
@@ -378,5 +393,31 @@ public class Bank
 		
 
 		return ret;
+	}
+
+	private double getValueTransact(Account accountSender)
+	{
+		double value = -1;
+		String input;
+
+		do
+		{
+			System.out.print("\nEnter the value of the transaction : ");
+			try
+			{
+				input = scanner.nextLine();
+				value = Double.parseDouble( input );
+			} catch(NumberFormatException e){
+				System.out.println("Insert a double, please.\n");
+			}
+
+			if(value >accountSender.getBalance() )
+			{
+				System.out.println("The account does not have enough on its balance ");
+			}
+
+		}while(value <=0.0 || value >accountSender.getBalance());
+
+		return value;
 	}
 }
